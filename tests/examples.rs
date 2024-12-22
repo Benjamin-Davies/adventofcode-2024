@@ -1,4 +1,4 @@
-use adventofcode_2024::days::{day01, day02, day03};
+use adventofcode_2024::days::{day01, day02, day03, day04};
 
 #[test]
 fn day01_1_ex1() {
@@ -40,4 +40,18 @@ fn day03_2_ex2() {
     let input = include_str!("../inputs/day03/ex2.txt");
     let answer = day03::part2(input);
     assert_eq!(answer, 48);
+}
+
+#[test]
+fn day04_1_ex1() {
+    let input = include_str!("../inputs/day04/ex1.txt");
+    let answer = day04::part1(input);
+    assert_eq!(answer, 4);
+}
+
+#[test]
+fn day04_1_ex2() {
+    let input = include_str!("../inputs/day04/ex2.txt");
+    let answer = day04::part1(input);
+    assert_eq!(answer, 18);
 }
