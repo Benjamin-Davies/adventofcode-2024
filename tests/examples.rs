@@ -34,3 +34,10 @@ fn day03_1_ex1() {
     let answer = day03::part1(input);
     assert_eq!(answer, 161);
 }
+
+#[test]
+fn day03_2_ex2() {
+    let input = include_str!("../inputs/day03/ex2.txt");
+    let answer = day03::part2(input);
+    assert_eq!(answer, 48);
+}
