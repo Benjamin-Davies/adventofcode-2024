@@ -6,17 +6,12 @@ use std::{
 use adventofcode_2024::days::get_solution;
 
 fn main() {
-    let day = args()
-        .nth(1)
-        .expect("day number as argument")
-        .trim()
-        .parse::<u32>()
-        .unwrap();
+    let part = args().nth(1).expect("day number as argument");
+    let solution = get_solution(&part);
 
     let mut input = String::new();
     stdin().read_to_string(&mut input).unwrap();
 
-    let solution = get_solution(day);
     let answer = solution(&input);
     println!("Answer: {answer}");
 }
