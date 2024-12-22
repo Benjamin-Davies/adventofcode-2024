@@ -14,6 +14,7 @@ pub fn get_solution(part: &str) -> Solution {
         "3.1" => day03::part1,
         "3.2" => day03::part2,
         "4.1" => day04::part1,
+        "4.2" => day04::part2,
         _ => unimplemented!("part {part}"),
     }
 }

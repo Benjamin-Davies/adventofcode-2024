@@ -48,3 +48,33 @@ pub fn part1(input: &str) -> u64 {
     }
     count
 }
+pub fn part2(input: &str) -> u64 {
+    let grid = parse_input(input);
+    if grid.rows() < 3 || grid.cols() < 3 {
+        return 0;
+    }
+
+    let mut count = 0;
+    for i_center in 1..(grid.rows() - 1) {
+        for j_center in 1..(grid.cols() - 1) {
+            let center = grid[i_center][j_center];
+            if center != 2 {
+                continue;
+            }
+
+            let ne = grid[i_center - 1][j_center + 1];
+            let se = grid[i_center + 1][j_center + 1];
+            let sw = grid[i_center + 1][j_center - 1];
+            let nw = grid[i_center - 1][j_center - 1];
+
+            let is_match = matches!(
+                (ne, se, sw, nw),
+                (1, 1, 3, 3) | (1, 3, 3, 1) | (3, 3, 1, 1) | (3, 1, 1, 3),
+            );
+            if is_match {
+                count += 1;
+            }
+        }
+    }
+    count
+}

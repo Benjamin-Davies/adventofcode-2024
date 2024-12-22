@@ -19,6 +19,14 @@ impl<T> Grid<T> {
         }
     }
 
+    pub fn rows(&self) -> usize {
+        self.rows
+    }
+
+    pub fn cols(&self) -> usize {
+        self.cols
+    }
+
     pub fn positions(&self) -> impl Iterator<Item = (usize, usize)> {
         let rows = self.rows;
         let cols = self.cols;
