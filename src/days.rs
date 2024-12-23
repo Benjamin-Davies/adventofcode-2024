@@ -4,6 +4,7 @@ pub mod day03;
 pub mod day04;
 pub mod day05;
 pub mod day06;
+pub mod day07;
 
 pub type Solution = fn(input: &str) -> u64;
 
@@ -21,6 +22,7 @@ pub fn get_solution(part: &str) -> Solution {
         "5.2" => day05::part2,
         "6.1" => day06::part1,
         "6.2" => day06::part2,
+        "7.1" => day07::part1,
         _ => unimplemented!("part {part}"),
     }
 }
