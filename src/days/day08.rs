@@ -51,3 +51,34 @@ pub fn part1(input: &str) -> u64 {
 
     antinodes.len() as u64
 }
+
+pub fn part2(input: &str) -> u64 {
+    let (rows, cols, frequencies) = parse_input(input);
+
+    let mut antinodes = BTreeSet::new();
+    for towers in frequencies.values() {
+        for m in 0..towers.len() {
+            for n in 0..towers.len() {
+                if m == n {
+                    continue;
+                }
+
+                let (i1, j1) = towers[m];
+                let (i2, j2) = towers[n];
+                let delta_i = i2 - i1;
+                let delta_j = j2 - j1;
+                let mut i = i1;
+                let mut j = j1;
+
+                while i >= 0 && j >= 0 && i < rows && j < cols {
+                    antinodes.insert((i, j));
+
+                    i += delta_i;
+                    j += delta_j;
+                }
+            }
+        }
+    }
+
+    antinodes.len() as u64
+}
