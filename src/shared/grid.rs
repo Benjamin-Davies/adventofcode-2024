@@ -1,4 +1,4 @@
-use std::ops::Index;
+use std::ops::{Index, IndexMut};
 
 pub struct Grid<T> {
     data: Vec<T>,
@@ -6,12 +6,25 @@ pub struct Grid<T> {
     cols: usize,
 }
 
+/// Allows a grid to be constructed by calling `push` and `newline` in the same
+/// order that the characters appear in the puzzle input.
 pub struct GridBuilder<T> {
     data: Vec<T>,
     cols: Option<usize>,
 }
 
 impl<T> Grid<T> {
+    pub fn new(rows: usize, cols: usize, value: T) -> Self
+    where
+        T: Clone,
+    {
+        Self {
+            data: vec![value; rows * cols],
+            rows,
+            cols,
+        }
+    }
+
     pub fn builder() -> GridBuilder<T> {
         GridBuilder {
             data: Vec::new(),
@@ -47,6 +60,13 @@ impl<T> Index<usize> for Grid<T> {
     }
 }
 
+impl<T> IndexMut<usize> for Grid<T> {
+    fn index_mut(&mut self, index: usize) -> &mut Self::Output {
+        let start = index * self.cols;
+        &mut self.data[start..start + self.cols]
+    }
+}
+
 impl<T> GridBuilder<T> {
     pub fn push(&mut self, x: T) {
         self.data.push(x);
@@ -57,6 +77,14 @@ impl<T> GridBuilder<T> {
             assert_eq!(self.data.len() % width, 0);
         } else {
             self.cols = Some(self.data.len());
+        }
+    }
+
+    pub fn next_position(&self) -> (usize, usize) {
+        if let Some(cols) = self.cols {
+            (self.data.len() / cols, self.data.len() % cols)
+        } else {
+            (0, self.data.len())
         }
     }
 
