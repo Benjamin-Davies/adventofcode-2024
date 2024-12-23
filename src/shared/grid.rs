@@ -1,5 +1,6 @@
 use std::ops::{Index, IndexMut};
 
+#[derive(Debug, Clone)]
 pub struct Grid<T> {
     data: Vec<T>,
     rows: usize,
@@ -48,6 +49,15 @@ impl<T> Grid<T> {
 
     pub fn contains(&self, i: isize, j: isize) -> bool {
         i >= 0 && j >= 0 && i < self.rows as isize && j < self.cols as isize
+    }
+
+    pub fn copy_from(&mut self, other: &Grid<T>)
+    where
+        T: Copy,
+    {
+        assert_eq!(self.rows, other.rows);
+        assert_eq!(self.cols, other.cols);
+        self.data.copy_from_slice(&other.data);
     }
 }
 
