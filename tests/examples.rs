@@ -132,3 +132,10 @@ fn day09_1_ex2() {
     let answer = day09::part1(input);
     assert_eq!(answer, 60);
 }
+
+#[test]
+fn day09_2_ex1() {
+    let input = include_str!("../inputs/day09/ex1.txt");
+    let answer = day09::part2(input);
+    assert_eq!(answer, 2858);
+}
