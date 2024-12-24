@@ -1,109 +1,93 @@
-use std::{cmp::Ordering, fmt, iter};
-
-fn parse_input(input: &str) -> Vec<u8> {
-    let mut bytes = input.trim().as_bytes().to_vec();
-    assert_eq!(bytes.len() % 2, 1);
-    for b in &mut bytes {
-        assert!(b.is_ascii_digit());
-        *b -= b'0';
-    }
-    bytes
+#[derive(Debug, Clone, Copy)]
+enum Group {
+    File { size: u8, number: u32 },
+    Empty { size: u8 },
 }
 
-struct Cursor<'a> {
-    map: &'a [u8],
-    group: usize,
-    block: usize,
-}
-
-impl<'a> Cursor<'a> {
-    fn start_of(map: &'a [u8]) -> Self {
-        Self {
-            map,
-            group: 0,
-            block: 0,
-        }
-    }
-
-    fn end_of(map: &'a [u8]) -> Self {
-        let group = map.len() - 1;
-        let block = map[group] as usize - 1;
-        Self { map, group, block }
-    }
-
-    fn is_empty(&self) -> bool {
-        self.group % 2 == 1
-    }
-
-    fn file_number(&self) -> u64 {
-        self.group as u64 / 2
-    }
-
-    fn next_block(&mut self) {
-        self.block += 1;
-        while self.block >= self.map[self.group] as usize {
-            self.group += 1;
-            self.block = 0;
-        }
-    }
-
-    fn prev_block(&mut self) {
-        while self.block == 0 {
-            self.group -= 1;
-            self.block = self.map[self.group] as usize;
-        }
-        self.block -= 1;
-    }
-}
-
-impl<'a> PartialEq for Cursor<'a> {
-    fn eq(&self, other: &Self) -> bool {
-        PartialEq::eq(&(self.group, self.block), &(other.group, other.block))
-    }
-}
-
-impl<'a> PartialOrd for Cursor<'a> {
-    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
-        PartialOrd::partial_cmp(&(self.group, self.block), &(other.group, other.block))
-    }
-}
-
-impl<'a> fmt::Debug for Cursor<'a> {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "({}, {})", self.group, self.block)
-    }
+fn parse_input(input: &str) -> Vec<Group> {
+    input
+        .trim()
+        .chars()
+        .enumerate()
+        .map(|(i, c)| {
+            let size = c as u8 - b'0';
+            if i % 2 == 0 {
+                Group::File {
+                    size,
+                    number: i as u32 / 2,
+                }
+            } else {
+                Group::Empty { size }
+            }
+        })
+        .collect()
 }
 
 pub fn part1(input: &str) -> u64 {
-    let map = parse_input(input);
+    let mut map = parse_input(input);
 
-    compacted(&map).enumerate().map(|(i, n)| i as u64 * n).sum()
+    compact(&mut map, true);
+    checksum(&map)
 }
 
-fn compacted(map: &[u8]) -> impl Iterator<Item = u64> + '_ {
-    let mut left_cursor = Cursor::start_of(&map);
-    let mut right_cursor = Cursor::end_of(&map);
-    iter::from_fn(move || {
-        if left_cursor > right_cursor {
-            return None;
-        }
-        let file_number;
-        if !left_cursor.is_empty() {
-            file_number = left_cursor.file_number();
-            left_cursor.next_block();
-        } else {
-            while right_cursor.is_empty() {
-                right_cursor.prev_block();
-            }
-            if left_cursor > right_cursor {
-                return None;
-            }
+fn compact(map: &mut Vec<Group>, allow_fragmentation: bool) {
+    'outer: loop {
+        let i = map.len() - 1;
+        let Group::File { size, number } = map[i] else {
+            map.pop();
+            continue;
+        };
 
-            file_number = right_cursor.file_number();
-            left_cursor.next_block();
-            right_cursor.prev_block();
+        for (j, &slot) in map.iter().enumerate() {
+            let Group::Empty { size: slot_size } = slot else {
+                continue;
+            };
+
+            if size < slot_size {
+                map[j] = Group::Empty {
+                    size: slot_size - size,
+                };
+                map.insert(j, Group::File { size, number });
+                map.pop();
+                continue 'outer;
+            } else if size == slot_size {
+                map[j] = Group::File { size, number };
+                map.pop();
+                continue 'outer;
+            } else if allow_fragmentation {
+                map[j] = Group::File {
+                    size: slot_size,
+                    number,
+                };
+                map[i] = Group::File {
+                    size: size - slot_size,
+                    number,
+                };
+                continue 'outer;
+            }
         }
 
-        return Some(file_number);
-    })
+        break 'outer;
+    }
+}
+
+fn checksum(map: &[Group]) -> u64 {
+    let mut sum = 0;
+    let mut block = 0;
+    for &group in map {
+        match group {
+            Group::File { size, number } => {
+                let size = size as u64;
+                let number = number as u64;
+                if size > 0 {
+                    sum += (size * block + size * (size - 1) / 2) * number;
+                }
+                block += size;
+            }
+            Group::Empty { size } => {
+                block += size as u64;
+            }
+        }
+    }
+    sum
 }
