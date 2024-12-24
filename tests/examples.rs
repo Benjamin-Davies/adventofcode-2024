@@ -68,4 +68,7 @@ tests! {
         part1 { ex1: 55312 },
         part2 { },
     ),
+    day12(
+        part1 { ex1: 140, ex2: 772, ex3: 1930 },
+    ),
 }
