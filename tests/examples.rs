@@ -64,4 +64,7 @@ tests! {
         part1 { ex1: 1, ex2: 2, ex3: 4, ex4: 3 },
         part2 { ex5:81, ex6: 3, ex7: 13, ex8: 227 },
     },
+    day11 {
+        part1 { ex1: 55312 },
+    },
 }
