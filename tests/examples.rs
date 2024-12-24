@@ -1,141 +1,66 @@
-use adventofcode_2024::days::{day01, day02, day03, day04, day05, day06, day07, day08, day09};
-
-#[test]
-fn day01_1_ex1() {
-    let input = include_str!("../inputs/day01/ex1.txt");
-    let answer = day01::part1(input);
-    assert_eq!(answer, 11);
+macro_rules! tests {
+    (
+        $( $day:ident { $( $part:ident { $(
+            $example:ident : $answer:literal
+        ),* }, )* }, )*
+    ) => {
+        $( mod $day { $( mod $part { $(
+            #[test]
+            fn $example() {
+                let input = include_str!(
+                    concat!(
+                        "../inputs/",
+                        stringify!($day),
+                        "/",
+                        stringify!($example),
+                        ".txt",
+                    ),
+                );
+                let answer = adventofcode_2024::days::$day::$part(input);
+                assert_eq!(answer, $answer);
+            }
+        )* } )* } )*
+    };
 }
 
-#[test]
-fn day01_2_ex1() {
-    let input = include_str!("../inputs/day01/ex1.txt");
-    let answer = day01::part2(input);
-    assert_eq!(answer, 31);
-}
-
-#[test]
-fn day02_1_ex1() {
-    let input = include_str!("../inputs/day02/ex1.txt");
-    let answer = day02::part1(input);
-    assert_eq!(answer, 2);
-}
-
-#[test]
-fn day02_2_ex1() {
-    let input = include_str!("../inputs/day02/ex1.txt");
-    let answer = day02::part2(input);
-    assert_eq!(answer, 4);
-}
-
-#[test]
-fn day03_1_ex1() {
-    let input = include_str!("../inputs/day03/ex1.txt");
-    let answer = day03::part1(input);
-    assert_eq!(answer, 161);
-}
-
-#[test]
-fn day03_2_ex2() {
-    let input = include_str!("../inputs/day03/ex2.txt");
-    let answer = day03::part2(input);
-    assert_eq!(answer, 48);
-}
-
-#[test]
-fn day04_1_ex1() {
-    let input = include_str!("../inputs/day04/ex1.txt");
-    let answer = day04::part1(input);
-    assert_eq!(answer, 4);
-}
-
-#[test]
-fn day04_1_ex2() {
-    let input = include_str!("../inputs/day04/ex2.txt");
-    let answer = day04::part1(input);
-    assert_eq!(answer, 18);
-}
-
-#[test]
-fn day04_2_ex2() {
-    let input = include_str!("../inputs/day04/ex2.txt");
-    let answer = day04::part2(input);
-    assert_eq!(answer, 9);
-}
-
-#[test]
-fn day05_1_ex1() {
-    let input = include_str!("../inputs/day05/ex1.txt");
-    let answer = day05::part1(input);
-    assert_eq!(answer, 143);
-}
-
-#[test]
-fn day05_2_ex1() {
-    let input = include_str!("../inputs/day05/ex1.txt");
-    let answer = day05::part2(input);
-    assert_eq!(answer, 123);
-}
-
-#[test]
-fn day06_1_ex1() {
-    let input = include_str!("../inputs/day06/ex1.txt");
-    let answer = day06::part1(input);
-    assert_eq!(answer, 41);
-}
-
-#[test]
-fn day06_2_ex1() {
-    let input = include_str!("../inputs/day06/ex1.txt");
-    let answer = day06::part2(input);
-    assert_eq!(answer, 6);
-}
-
-#[test]
-fn day07_1_ex1() {
-    let input = include_str!("../inputs/day07/ex1.txt");
-    let answer = day07::part1(input);
-    assert_eq!(answer, 3749);
-}
-
-#[test]
-fn day07_2_ex1() {
-    let input = include_str!("../inputs/day07/ex1.txt");
-    let answer = day07::part2(input);
-    assert_eq!(answer, 11387);
-}
-
-#[test]
-fn day08_1_ex1() {
-    let input = include_str!("../inputs/day08/ex1.txt");
-    let answer = day08::part1(input);
-    assert_eq!(answer, 14);
-}
-
-#[test]
-fn day08_2_ex1() {
-    let input = include_str!("../inputs/day08/ex1.txt");
-    let answer = day08::part2(input);
-    assert_eq!(answer, 34);
-}
-
-#[test]
-fn day09_1_ex1() {
-    let input = include_str!("../inputs/day09/ex1.txt");
-    let answer = day09::part1(input);
-    assert_eq!(answer, 1928);
-}
-
-#[test]
-fn day09_1_ex2() {
-    let input = include_str!("../inputs/day09/ex2.txt");
-    let answer = day09::part1(input);
-    assert_eq!(answer, 60);
-}
-
-#[test]
-fn day09_2_ex1() {
-    let input = include_str!("../inputs/day09/ex1.txt");
-    let answer = day09::part2(input);
-    assert_eq!(answer, 2858);
+tests! {
+    day01 {
+        part1 { ex1: 11 },
+        part2 { ex1: 31 },
+    },
+    day02 {
+        part1 { ex1: 2 },
+        part2 { ex1: 4 },
+    },
+    day03 {
+        part1 { ex1: 161 },
+        part2 { ex2: 48 },
+    },
+    day04 {
+        part1 { ex1: 4, ex2: 18 },
+        part2 { ex2: 9 },
+    },
+    day05 {
+        part1 { ex1: 143 },
+        part2 { ex1: 123 },
+    },
+    day06 {
+        part1 { ex1: 41 },
+        part2 { ex1: 6 },
+    },
+    day07 {
+        part1 { ex1: 3749 },
+        part2 { ex1: 11387 },
+    },
+    day08 {
+        part1 { ex1: 14 },
+        part2 { ex1: 34 },
+    },
+    day09 {
+        part1 { ex1: 1928, ex2: 60 },
+        part2 { ex1: 2858 },
+    },
+    day10 {
+        part1 { ex1: 1, ex2: 2, ex3: 4, ex4: 3 },
+    },
 }
