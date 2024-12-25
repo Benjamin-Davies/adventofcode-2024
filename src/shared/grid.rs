@@ -1,5 +1,7 @@
 use std::ops::{Index, IndexMut};
 
+use super::vec2::Vec2;
+
 #[derive(Debug, Clone)]
 pub struct Grid<T> {
     data: Vec<T>,
@@ -72,6 +74,20 @@ impl<T> IndexMut<usize> for Grid<T> {
     fn index_mut(&mut self, index: usize) -> &mut Self::Output {
         let start = index * self.cols;
         &mut self.data[start..start + self.cols]
+    }
+}
+
+impl<T> Index<Vec2> for Grid<T> {
+    type Output = T;
+
+    fn index(&self, index: Vec2) -> &Self::Output {
+        &self[index.y as usize][index.x as usize]
+    }
+}
+
+impl<T> IndexMut<Vec2> for Grid<T> {
+    fn index_mut(&mut self, index: Vec2) -> &mut Self::Output {
+        &mut self[index.y as usize][index.x as usize]
     }
 }
 

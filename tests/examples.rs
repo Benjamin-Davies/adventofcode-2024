@@ -80,4 +80,7 @@ tests! {
         part1 { ex1: 12 },
         part2 { ex1: 1 },
     ),
+    day15(
+        part1 { ex1: 10092, ex2: 2028 },
+    ),
 }
