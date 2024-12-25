@@ -78,5 +78,6 @@ tests! {
     ),
     day14(
         part1 { ex1: 12 },
+        part2 { ex1: 1 },
     ),
 }
