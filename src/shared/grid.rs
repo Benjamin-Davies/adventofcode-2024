@@ -42,9 +42,7 @@ impl<T> Grid<T> {
     }
 
     pub fn positions(&self) -> impl Iterator<Item = (usize, usize)> {
-        let rows = self.rows;
-        let cols = self.cols;
-        (0..rows).flat_map(move |i| (0..cols).map(move |j| (i, j)))
+        cartesian_product(0..self.rows, 0..self.cols)
     }
 
     pub fn contains(&self, i: isize, j: isize) -> bool {
@@ -107,4 +105,11 @@ impl<T> GridBuilder<T> {
             rows: height,
         }
     }
+}
+
+pub fn cartesian_product<'a, X: Clone, Y>(
+    a: impl Iterator<Item = X> + 'a,
+    b: impl Iterator<Item = Y> + Clone + 'a,
+) -> impl Iterator<Item = (X, Y)> {
+    a.flat_map(move |x| b.clone().map(move |y| (x.clone(), y)))
 }
