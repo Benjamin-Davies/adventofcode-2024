@@ -1,42 +1,10 @@
-use std::ops::{Add, Mul};
-
-use crate::shared::grid::cartesian_product;
-
-const MAX_PRESSES: u64 = 100;
+use crate::shared::vec2::Vec2;
 
 #[derive(Debug)]
 struct ClawMachine {
     button_a: Vec2,
     button_b: Vec2,
     prize: Vec2,
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-struct Vec2 {
-    x: u64,
-    y: u64,
-}
-
-impl Add for Vec2 {
-    type Output = Vec2;
-
-    fn add(self, rhs: Self) -> Self::Output {
-        Vec2 {
-            x: self.x + rhs.x,
-            y: self.y + rhs.y,
-        }
-    }
-}
-
-impl Mul<Vec2> for u64 {
-    type Output = Vec2;
-
-    fn mul(self, rhs: Vec2) -> Self::Output {
-        Vec2 {
-            x: self * rhs.x,
-            y: self * rhs.y,
-        }
-    }
 }
 
 fn parse_input(input: &str) -> Vec<ClawMachine> {
@@ -79,9 +47,42 @@ pub fn part1(input: &str) -> u64 {
     machines.iter().filter_map(tokens_to_win).sum()
 }
 
+pub fn part2(input: &str) -> u64 {
+    let mut machines = parse_input(input);
+
+    for machine in &mut machines {
+        machine.prize.x += 10_000_000_000_000;
+        machine.prize.y += 10_000_000_000_000;
+    }
+
+    machines.iter().filter_map(tokens_to_win).sum()
+}
+
 fn tokens_to_win(machine: &ClawMachine) -> Option<u64> {
-    cartesian_product(0..=MAX_PRESSES, 0..=MAX_PRESSES)
-        .filter(|&(a, b)| a * machine.button_a + b * machine.button_b == machine.prize)
-        .map(|(a, b)| 3 * a + b)
-        .min()
+    let &ClawMachine {
+        button_a,
+        button_b,
+        prize,
+    } = machine;
+
+    // Find an integer solution to:
+    // a*x_a + b*x_b = x_p
+    // a*y_a + b*y_b = y_p
+
+    // The following solves using a 2x2 matrix inversion but defers the division until last.
+    let a_numerator = prize.x * button_b.y - prize.y * button_b.x;
+    let b_numerator = -prize.x * button_a.y + prize.y * button_a.x;
+    let determinant = button_a.x * button_b.y - button_b.x * button_a.y;
+
+    // This is true in all of the example cases, and is necessary for there to be a unique solution.
+    assert_ne!(determinant, 0);
+
+    if a_numerator % determinant != 0 || b_numerator % determinant != 0 {
+        return None;
+    }
+    let a = (a_numerator / determinant) as u64;
+    let b = (b_numerator / determinant) as u64;
+
+    // Return the number of tokens spent.
+    Some(3 * a + b)
 }
