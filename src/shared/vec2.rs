@@ -12,6 +12,8 @@ impl Vec2 {
     pub const SOUTH: Vec2 = Vec2 { x: 0, y: 1 };
     pub const WEST: Vec2 = Vec2 { x: -1, y: 0 };
 
+    pub const CARDINAL_DIRECTIONS: [Vec2; 4] = [Vec2::NORTH, Vec2::EAST, Vec2::SOUTH, Vec2::WEST];
+
     pub fn dir_ordinal(&self) -> u32 {
         match self {
             Vec2 { x: 0, y: -1 } => 0,
