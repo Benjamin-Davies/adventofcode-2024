@@ -131,6 +131,14 @@ impl<T> GridBuilder<T> {
         }
     }
 
+    pub fn next_position_vec2(&self) -> Vec2 {
+        let (i, j) = self.next_position();
+        Vec2 {
+            x: j as i64,
+            y: i as i64,
+        }
+    }
+
     pub fn build(self) -> Grid<T> {
         let width = self.cols.unwrap();
         let height = self.data.len() / width;
