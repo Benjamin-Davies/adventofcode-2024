@@ -1,8 +1,11 @@
-use std::ops::{Index, IndexMut};
+use std::{
+    fmt::{self, Write},
+    ops::{Index, IndexMut},
+};
 
 use super::vec2::Vec2;
 
-#[derive(Debug, Clone)]
+#[derive(Clone)]
 pub struct Grid<T> {
     data: Vec<T>,
     rows: usize,
@@ -88,6 +91,22 @@ impl<T> Index<Vec2> for Grid<T> {
 impl<T> IndexMut<Vec2> for Grid<T> {
     fn index_mut(&mut self, index: Vec2) -> &mut Self::Output {
         &mut self[index.y as usize][index.x as usize]
+    }
+}
+
+impl<T> fmt::Debug for Grid<T>
+where
+    T: Copy + Into<char>,
+{
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "{}x{}", self.rows, self.cols)?;
+        for i in 0..self.rows {
+            writeln!(f)?;
+            for j in 0..self.cols {
+                f.write_char(self[i][j].into())?;
+            }
+        }
+        Ok(())
     }
 }
 
