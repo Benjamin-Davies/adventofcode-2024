@@ -1,3 +1,4 @@
+#[derive(Debug, Clone, Copy)]
 struct State {
     register_a: u64,
     register_b: u64,
@@ -50,18 +51,58 @@ fn parse_input(input: &str) -> (State, Vec<u8>) {
 }
 
 pub fn part1(input: &str) -> String {
-    let (mut state, instructions) = parse_input(input);
+    let (state, instructions) = parse_input(input);
 
-    let mut output = Vec::new();
-    while state.instruction_pointer < instructions.len() {
-        step(&mut state, &instructions, &mut output);
-    }
+    let output = run_program(state, &instructions);
 
     output
         .iter()
         .map(ToString::to_string)
         .collect::<Vec<_>>()
         .join(",")
+}
+
+pub fn part2(input: &str) -> u64 {
+    let (state, instructions) = parse_input(input);
+
+    for i in 0..=u16::MAX {
+        let start_value = (i as u64) << 48;
+        if let Some(value) = search(start_value, 15, state, &instructions) {
+            return value;
+        }
+    }
+    unimplemented!()
+}
+
+fn search(start_value: u64, i: u32, start_state: State, instructions: &[u8]) -> Option<u64> {
+    // The trick here is that, in the program we were given, a given output
+    // digit is not affected by earlier input digits. Therefore, a DFS starting
+    // at the trailing end of the input should be able to find the solution.
+
+    for j in 0..8 {
+        let value = set_octal_digit(start_value, i, j);
+
+        let mut state = start_state;
+        state.register_a = value;
+        let output = run_program(state, &instructions);
+
+        if output.get(i as usize) == instructions.get(i as usize) {
+            if i == 0 {
+                return Some(value);
+            } else if let Some(v) = search(value, i - 1, start_state, instructions) {
+                return Some(v);
+            }
+        }
+    }
+    None
+}
+
+fn run_program(mut state: State, instructions: &[u8]) -> Vec<u8> {
+    let mut output = Vec::new();
+    while state.instruction_pointer < instructions.len() {
+        step(&mut state, &instructions, &mut output);
+    }
+    output
 }
 
 fn step(state: &mut State, instructions: &[u8], output: &mut Vec<u8>) {
@@ -101,4 +142,10 @@ fn step(state: &mut State, instructions: &[u8], output: &mut Vec<u8>) {
         7 => state.register_c = state.register_a >> combo_operand,
         _ => unimplemented!(),
     }
+}
+
+fn set_octal_digit(mut n: u64, i: u32, d: u8) -> u64 {
+    n &= !(7 << (3 * i));
+    n |= (d as u64) << (3 * i);
+    n
 }
