@@ -12,6 +12,6 @@ fn main() {
     let mut input = String::new();
     stdin().read_to_string(&mut input).unwrap();
 
-    let answer = solution(&input);
+    let answer = solution.run(&input);
     println!("Answer: {answer}");
 }

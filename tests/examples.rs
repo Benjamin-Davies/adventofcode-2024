@@ -17,7 +17,7 @@ macro_rules! tests {
                     ),
                 );
                 let answer = adventofcode_2024::days::$day::$part(input);
-                assert_eq!(answer, $answer);
+                assert_eq!(answer.to_string(), $answer.to_string());
             }
         )* } )* } )*
     };
@@ -66,7 +66,7 @@ tests! {
     ),
     day11(
         part1 { ex1: 55312 },
-        part2 { ex1: 65601038650482 },
+        part2 { ex1: 65601038650482u64 },
     ),
     day12(
         part1 { ex1: 140, ex2: 772, ex3: 1930 },
@@ -74,7 +74,7 @@ tests! {
     ),
     day13(
         part1 { ex1: 480 },
-        part2 { ex1: 875318608908 },
+        part2 { ex1: 875318608908u64 },
     ),
     day14(
         part1 { ex1: 12 },
@@ -87,5 +87,8 @@ tests! {
     day16(
         part1 { ex1: 7036, ex2: 11048 },
         part2 { ex1: 45, ex2: 64 },
+    ),
+    day17(
+        part1 { ex1: "4,6,3,5,6,3,5,2,1,0" },
     ),
 }
