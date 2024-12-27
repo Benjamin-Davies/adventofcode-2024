@@ -1,4 +1,7 @@
-use std::{cmp::Reverse, collections::BinaryHeap};
+use std::{
+    cmp::{Ordering, Reverse},
+    collections::BinaryHeap,
+};
 
 use crate::shared::{grid::Grid, vec2::Vec2};
 
@@ -33,6 +36,27 @@ impl From<Tile> for char {
 pub fn part1(input: &str) -> u64 {
     let incoming = parse_input(input);
 
+    let n = if incoming.len() <= 100 { 12 } else { 1024 };
+
+    shortest_path(&incoming, n).unwrap()
+}
+
+pub fn part2(input: &str) -> String {
+    let incoming = parse_input(input);
+
+    let index = (0..incoming.len())
+        .collect::<Vec<_>>()
+        .binary_search_by(|&n| match shortest_path(&incoming, n) {
+            Some(_) => Ordering::Less,
+            None => Ordering::Greater,
+        })
+        .unwrap_err();
+
+    let Vec2 { x, y } = incoming[index - 1];
+    format!("{x},{y}")
+}
+
+fn shortest_path(incoming: &[Vec2], n: usize) -> Option<u64> {
     let start = Vec2 { x: 0, y: 0 };
     let end = Vec2 {
         x: incoming.iter().map(|v| v.x).max().unwrap(),
@@ -41,7 +65,6 @@ pub fn part1(input: &str) -> u64 {
     let w = end.x as usize + 1;
     let h = end.y as usize + 1;
 
-    let n = if end.x <= 6 { 12 } else { 1024 };
     let mut map = Grid::new(h, w, Tile::Empty);
     for &pos in &incoming[..n] {
         map[pos] = Tile::Occupied;
@@ -52,7 +75,7 @@ pub fn part1(input: &str) -> u64 {
     heap.push((Reverse(0), start));
     while let Some((Reverse(score), pos)) = heap.pop() {
         if pos == end {
-            return score;
+            return Some(score);
         }
 
         if visited[pos] || map[pos] == Tile::Occupied {
@@ -68,5 +91,5 @@ pub fn part1(input: &str) -> u64 {
         }
     }
 
-    unimplemented!()
+    None
 }
