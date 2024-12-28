@@ -100,4 +100,7 @@ tests! {
         part1 { ex1: 6 },
         part2 { ex1: 16 },
     ),
+    day20(
+        part1 { ex1: 5 },
+    ),
 }
