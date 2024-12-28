@@ -102,5 +102,6 @@ tests! {
     ),
     day20(
         part1 { ex1: 5 },
+        part2 { ex1: 285 },
     ),
 }
