@@ -71,6 +71,7 @@ pub fn get_solution(part: &str) -> &dyn Solution {
         "18.1" => &day18::part1,
         "18.2" => &day18::part2,
         "19.1" => &day19::part1,
+        "19.2" => &day19::part2,
         _ => unimplemented!("part {part}"),
     }
 }

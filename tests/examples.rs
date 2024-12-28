@@ -98,5 +98,6 @@ tests! {
     ),
     day19(
         part1 { ex1: 6 },
+        part2 { ex1: 16 },
     ),
 }
