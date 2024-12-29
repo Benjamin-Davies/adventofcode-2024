@@ -104,4 +104,7 @@ tests! {
         part1 { ex1: 5 },
         part2 { ex1: 285 },
     ),
+    day21(
+        part1 { ex1: 126384 },
+    ),
 }

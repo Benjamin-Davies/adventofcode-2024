@@ -7,6 +7,8 @@ pub struct Vec2 {
 }
 
 impl Vec2 {
+    pub const ZERO: Vec2 = Vec2 { x: 0, y: 0 };
+
     pub const NORTH: Vec2 = Vec2 { x: 0, y: -1 };
     pub const EAST: Vec2 = Vec2 { x: 1, y: 0 };
     pub const SOUTH: Vec2 = Vec2 { x: 0, y: 1 };
