@@ -1,4 +1,4 @@
-use std::iter;
+use std::{collections::BTreeMap, iter, sync::Mutex};
 
 use crate::shared::vec2::Vec2;
 
@@ -14,14 +14,23 @@ pub fn part1(input: &str) -> u64 {
 
     codes
         .iter()
-        .map(|&(code, n)| shortest_code_all(code) * n)
+        .map(|&(code, n)| shortest_code_all(code, 3) * n)
         .sum()
 }
 
-fn shortest_code_all(code: &str) -> u64 {
+pub fn part2(input: &str) -> u64 {
+    let codes = parse_input(input);
+
+    codes
+        .iter()
+        .map(|&(code, n)| shortest_code_all(code, 26) * n)
+        .sum()
+}
+
+fn shortest_code_all(code: &str, levels: u64) -> u64 {
     let buttons = code.chars().map(numeric_keypad).collect::<Vec<_>>();
 
-    shortest_code(&buttons, Vec2::ZERO, 3)
+    shortest_code(&buttons, Vec2::ZERO, levels)
 }
 
 fn shortest_code(buttons: &[Vec2], start_pos: Vec2, level: u64) -> u64 {
@@ -32,17 +41,41 @@ fn shortest_code(buttons: &[Vec2], start_pos: Vec2, level: u64) -> u64 {
         return buttons.len() as u64;
     }
 
-    let p1 = start_pos;
-    let p2 = buttons[0];
+    let mut total = 0;
+    let mut last_pos = start_pos;
+    for &button in buttons {
+        let p1 = last_pos;
+        let p2 = button;
 
-    let mut min = u64::MAX;
-    for mut next_buttons in button_combinations(p1, p2) {
-        next_buttons.push(Vec2::ZERO);
-        let count = shortest_code(&next_buttons, Vec2::ZERO, level - 1);
-        min = min.min(count);
+        let min = shortest_code_single(p1, p2, level);
+
+        total += min;
+        last_pos = button;
     }
 
-    min + shortest_code(&buttons[1..], p2, level)
+    total
+}
+
+fn shortest_code_single(p1: Vec2, p2: Vec2, level: u64) -> u64 {
+    static CACHE: Mutex<BTreeMap<(Vec2, Vec2, u64), u64>> = Mutex::new(BTreeMap::new());
+
+    if let Some(&min) = CACHE.lock().unwrap().get(&(p1, p2, level)) {
+        return min;
+    }
+
+    let mut combinations = button_combinations(p1, p2);
+    for next_buttons in &mut combinations {
+        next_buttons.push(Vec2::ZERO);
+    }
+    let min = combinations
+        .iter()
+        .map(|c| shortest_code(c, Vec2::ZERO, level - 1))
+        .min()
+        .unwrap();
+
+    CACHE.lock().unwrap().insert((p1, p2, level), min);
+
+    min
 }
 
 fn button_combinations(p1: Vec2, p2: Vec2) -> Vec<Vec<Vec2>> {
