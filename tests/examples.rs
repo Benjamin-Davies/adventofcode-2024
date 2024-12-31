@@ -112,4 +112,7 @@ tests! {
         part1 { ex1: 37327623 },
         part2 { ex2: 23 },
     ),
+    day23(
+        part1 { ex1: 7 },
+    ),
 }
