@@ -116,4 +116,7 @@ tests! {
         part1 { ex1: 7 },
         part2 { ex1: "co,de,ka,ta" },
     ),
+    day24(
+        part1 { ex1: 4, ex2: 2024 },
+    ),
 }

@@ -21,6 +21,7 @@ pub mod day20;
 pub mod day21;
 pub mod day22;
 pub mod day23;
+pub mod day24;
 
 pub trait Solution {
     fn run(&self, input: &str) -> String;
@@ -84,6 +85,7 @@ pub fn get_solution(part: &str) -> &dyn Solution {
         "22.2" => &day22::part2,
         "23.1" => &day23::part1,
         "23.2" => &day23::part2,
+        "24.1" => &day24::part1,
         _ => unimplemented!("part {part}"),
     }
 }
