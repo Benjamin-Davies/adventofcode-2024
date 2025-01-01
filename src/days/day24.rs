@@ -54,6 +54,8 @@ pub fn part1(input: &str) -> u64 {
 pub fn part2(input: &str) -> String {
     let (states, mut gates) = parse_input(input);
 
+    // There are few enough errors in the graph that it is easier to spot them
+    // by hand, with a little help figuring out which full-adder they are in.
     const SWAPS: &[(&str, &str)] = &[
         // Adder 09
         ("hbs", "kfp"),
