@@ -119,4 +119,7 @@ tests! {
     day24(
         part1 { ex1: 4, ex2: 2024 },
     ),
+    day25(
+        part1 { ex1: 3 },
+    ),
 }
