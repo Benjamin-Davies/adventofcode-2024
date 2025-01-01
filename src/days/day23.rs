@@ -1,4 +1,7 @@
-use std::collections::{BTreeMap, BTreeSet};
+use std::{
+    collections::{BTreeMap, BTreeSet, VecDeque},
+    iter, str,
+};
 
 /// Represents a node using it's ASCII-encoded name
 type Node = [u8; 2];
@@ -21,6 +24,18 @@ fn parse_node(input: &str) -> Node {
     input.as_bytes().try_into().unwrap()
 }
 
+fn stringify_set<'a>(nodes: impl IntoIterator<Item = &'a Node>) -> String {
+    nodes
+        .into_iter()
+        .map(stringify_node)
+        .collect::<Vec<_>>()
+        .join(",")
+}
+
+fn stringify_node(node: &Node) -> &str {
+    str::from_utf8(node).unwrap()
+}
+
 pub fn part1(input: &str) -> u64 {
     let graph = parse_input(input);
 
@@ -30,6 +45,13 @@ pub fn part1(input: &str) -> u64 {
         .iter()
         .filter(|&c| c.iter().any(|n| n[0] == b't'))
         .count() as u64
+}
+
+pub fn part2(input: &str) -> String {
+    let graph = parse_input(input);
+
+    let largest_clique = all_cliques(&graph).max_by_key(|c| c.len()).unwrap();
+    stringify_set(&largest_clique)
 }
 
 fn three_cliques(graph: &Graph) -> BTreeSet<[Node; 3]> {
@@ -47,4 +69,32 @@ fn three_cliques(graph: &Graph) -> BTreeSet<[Node; 3]> {
         }
     }
     cliques
+}
+
+fn all_cliques(graph: &Graph) -> impl Iterator<Item = BTreeSet<Node>> + '_ {
+    let mut ungrouped: BTreeSet<Node> = graph.keys().copied().collect();
+    iter::from_fn(move || {
+        let Some(seed) = ungrouped.pop_first() else {
+            return None;
+        };
+
+        let mut inside = BTreeSet::new();
+        let mut checked = BTreeSet::new();
+        let mut candidates = VecDeque::new();
+        candidates.push_back(seed);
+        while let Some(candidate) = candidates.pop_front() {
+            if checked.contains(&candidate) {
+                continue;
+            }
+
+            let neighbors = &graph[&candidate];
+            if neighbors.is_superset(&inside) {
+                inside.insert(candidate);
+                candidates.extend(neighbors);
+            }
+            checked.insert(candidate);
+        }
+
+        Some(inside)
+    })
 }

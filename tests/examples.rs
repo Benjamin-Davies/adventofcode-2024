@@ -114,5 +114,6 @@ tests! {
     ),
     day23(
         part1 { ex1: 7 },
+        part2 { ex1: "co,de,ka,ta" },
     ),
 }
